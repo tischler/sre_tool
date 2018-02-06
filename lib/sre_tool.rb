@@ -1,4 +1,5 @@
 require "sre_tool/version"
+require "sre_tool/nbm_api"
 
 require 'thor'
 
