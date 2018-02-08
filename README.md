@@ -26,3 +26,4 @@
 The versions of gems should be pinned down in sre_tool.gemspec, but it isn't critical for this use case.
 The API site should up, and if there are any problems with it, the tool will fail fast.
 The rspec tests are making live calls, not mocked calls.  If I were truly locking this thing down, I would disallow any HTTP requests from my tests through WebMock, and then mock out the responses.
+It also seems rspec is not memoizing the HTTP request data - this would be solved with mocking the calls. Not sure why that's the case.

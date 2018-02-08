@@ -5,17 +5,18 @@ module SreTool
 
   class BroadbandMapAPI
     include HTTParty
+
+    # API Constants
     base_uri 'https://www.broadbandmap.gov'
+    DATA_VERSION      = 'jun2014'
+    STATE_CENSUS_PATH = '/broadbandmap/census/state/'
+    DEMOGRAPHICS_PATH = "/broadbandmap/demographic/#{DATA_VERSION}/state/ids/"
 
     format :json
 
     # broadbandmap doesn't like content-type.  it prefers a format parameter of 'json'
     # so we'll include it here
     OPTIONS = { query: { format: 'json' } }
-
-    DATA_VERSION      = 'jun2014'
-    STATE_CENSUS_PATH = '/broadbandmap/census/state/'
-    DEMOGRAPHICS_PATH = "/broadbandmap/demographic/#{DATA_VERSION}/state/ids/"
 
     def state_census(state, opts = {})
       response = self.class.get(STATE_CENSUS_PATH + URI.encode(state) , self.options(opts))
