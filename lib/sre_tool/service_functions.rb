@@ -1,3 +1,5 @@
+require 'pp'
+
 module SreTool
   module ServiceFunctions
 
@@ -7,10 +9,12 @@ module SreTool
     # do a census lookup to get the census ID, and then
     # query for each states sensus data
     def retrieve_demographic_data(list_of_states)
-      list_of_states.split(',')
+      data = list_of_states.split(',')
         .map {|state| API.state_census(state) }
         .map {|census_data| census_data['fips'] }
         .map {|census_id| API.demographics(census_id) }
+
+      data
     end
 
     # take a demographcs data array, extract a set of keys and display in CSV format
@@ -26,12 +30,16 @@ module SreTool
     # take the output of demographics data, and display the average of
     # incomeBelowPovertyLevel
     def format_averages(demographics_data)
-      poverty_levels = demographics_data
-        .map { |row| row.fetch_values('incomeBelowPoverty')}
-        .flatten
+      numerator_of_weighted_poverty = demographics_data
+                            .map { |row| row['population'] * row['incomeBelowPoverty']}
+                            .inject(0.0) { |sum, item| sum + item }
 
-      average_poverty_level = poverty_levels.inject(0.0) { |a,b| a+b } / demographics_data.length
-      "Average Povery Level:#{average_poverty_level}"
+      denominator_of_population = demographics_data
+                            .map { |row| row['population'] }
+                            .inject(0) { |sum, item| sum + item }
+
+      (numerator_of_weighted_poverty / denominator_of_population).to_f
+
     end
   end
 end

@@ -31,10 +31,15 @@ RSpec.describe SreTool::ServiceFunctions do
     context "when output to averages" do
       let (:output) { format_averages(valid_query)}
 
-      it "should look correct" do
-        expected_average = (0.1769 + 0.1594 + 0.1963)/3
-        expect(output).to eq "Average Povery Level:0.17753333333333332"
-        expect(output.split(':').last).to eq expected_average.to_s
+      it "should be the correct answer" do
+
+        weighted_numerator = (0.1769*26967646) +
+                             (0.1594*3996309) +
+                             (0.1963*2160227)
+        population_sum = (26967646 + 3996309 + 2160227)
+        expected_average = (weighted_numerator / population_sum).to_f
+
+        expect(output).to eq expected_average
       end
     end
   end
