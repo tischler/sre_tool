@@ -1,37 +1,44 @@
+require 'thor'
+
 module SreTool
-  module Commands
 
-    API = SreTool::BroadbandMapAPI.new
+  class Command < Thor
+    include ServiceFunctions
 
-    # given a command delimited list of states
-    # do a census lookup to get the census ID, and then
-    # query for each states sensus data
-    def retrieve_demographic_data(list_of_states)
-      list_of_states.split(',')
-        .map {|state| API.state_census(state) }
-        .map {|census_data| census_data['fips'] }
-        .map {|census_id| API.demographics(census_id) }
+    desc "retrieve_data", "Do it!"
+    option  :format,
+            :aliases => '-f',
+            :default => 'csv',
+            :type => :string,
+            :desc => "[csv, averages]"
+    option :states,
+            :aliases => '-s',
+            :type => :string,
+            :required => true,
+            :desc => "Comma delimited list of states"
+    def retrieve_data
+      demographics_data = retrieve_demographic_data(options[:states])
+
+      if options[:format].eql?('csv')
+        puts format_csv(demographics_data)
+      else
+        puts format_averages(demographics_data)
+      end
+    rescue StateNotFoundError => sree
+      puts "ERROR:  Cannot find state '#{sree.message}'.  Cannot continue."
+    rescue InvalidCensusIDError => icie
+      puts "ERROR:  Consistency issue with APIs. Cannot find the census data for #{icie.message}.  Cannot continue."
+    rescue SreToolHTTPError => httpe
+      puts "ERROR: Http Error, Cannot continue."
+      puts httpe.message
+    rescue StandardError => se
+      puts "ERROR: Unknown Error. Cannot continue."
+      puts se.message
     end
 
-    # take a demographcs data array, extract a set of keys and display in CSV format
-    def format_csv(demographics_data)
-      keys = ['geographyName', 'population', 'households', 'incomeBelowPoverty', 'medianIncome']
-      csv = demographics_data
-        .map { |row| row.fetch_values(*keys) }
-        .map { |row| row.join(',')}
-
-      keys.join(',') + "\n" + csv.join("\n")
-    end
-
-    # take the output of demographics data, and display the average of
-    # incomeBelowPovertyLevel
-    def format_averages(demographics_data)
-      poverty_levels = demographics_data
-        .map { |row| row.fetch_values('incomeBelowPoverty')}
-        .flatten
-
-      average_poverty_level = poverty_levels.inject(0.0) { |a,b| a+b } / demographics_data.length
-      "Average Povery Level:#{average_poverty_level}"
+    desc "version", "Print version number"
+    def version
+      puts "My version is #{SreTool::VERSION}"
     end
   end
 end

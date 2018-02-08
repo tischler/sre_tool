@@ -11,10 +11,6 @@ RSpec.describe SreTool::BroadbandMapAPI do
       expect(texas_response).not_to be nil
     end
 
-    it "should have valid structure" do
-      expect(texas_response)
-    end
-
     it "should allow a space in the name of the state" do
       expect(new_mexico_response).not_to be nil
     end

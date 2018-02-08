@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-RSpec.describe SreTool::Commands do
-  include SreTool::Commands
+RSpec.describe SreTool::ServiceFunctions do
+  include SreTool::ServiceFunctions
 
   context 'Demographic Data' do
     let (:valid_query) { retrieve_demographic_data('texas,oregon,new mexico')}
