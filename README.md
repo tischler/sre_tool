@@ -1,29 +1,28 @@
 # SreTool
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/sre_tool`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Project setup
 
-TODO: Delete this and the text above, and describe your gem
+  This tool requires ruby 2.4.0+ and does not pin down a .ruby-version file.
+  You will need to make sure that you have 2.4.0+ as your current ruby.
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'sre_tool'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install sre_tool
+  To set up the project
+  $ bundle install
 
 ## Usage
 
-TODO: Write usage instructions here
+  To run the tests:
+  $ bundle exec rspec
+
+  To run an averages report:
+  $ bundle exec sre_tool retrieve_data -f averages --states texas,oregon,florida
+
+  To run a CSV report:
+  $ bundle exec sre_tool retrieve_data -f csv --states texas,oregon,florida
+
+  Since this uses Thor, you can install the gem system wide and use Thor, but that's beyond the scope of this exercise.
 
 ## Assumptions
 
 The versions of gems should be pinned down in sre_tool.gemspec, but it isn't critical for this use case.
+The API site should up, and if there are any problems with it, the tool will fail fast.
+The rspec tests are making live calls, not mocked calls.  If I were truly locking this thing down, I would disallow any HTTP requests from my tests through WebMock, and then mock out the responses.
