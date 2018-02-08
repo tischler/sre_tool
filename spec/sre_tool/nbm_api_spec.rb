@@ -43,5 +43,4 @@ RSpec.describe SreTool::BroadbandMapAPI do
       end
     end
   end
-
 end

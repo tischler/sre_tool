@@ -27,9 +27,9 @@ module SreTool
       demographics_data = retrieve_demographic_data(options[:states])
 
       if options[:format].eql?('csv')
-        display_csv(demographics_data)
+        puts format_csv(demographics_data)
       else
-        display_averages(demographics_data)
+        puts format_averages(demographics_data)
       end
     rescue StateNotFoundError => sree
       puts "ERROR:  Cannot find state '#{sree.message}'.  Cannot continue."
